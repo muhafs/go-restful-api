@@ -5,10 +5,8 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/julienschmidt/httprouter"
 	"github.com/muhafs/go-restful-api/app"
 	"github.com/muhafs/go-restful-api/controlller"
-	"github.com/muhafs/go-restful-api/exception"
 	"github.com/muhafs/go-restful-api/helper"
 	"github.com/muhafs/go-restful-api/middleware"
 	"github.com/muhafs/go-restful-api/repository"
@@ -28,18 +26,8 @@ func main() {
 	// make controller
 	ctgController := controlller.NewCategoryController(ctgService)
 
-	// make router object
-	router := httprouter.New()
-
-	// make route endpoints
-	router.GET("/api/categories", ctgController.FindAll)
-	router.POST("/api/categories", ctgController.Create)
-	router.GET("/api/categories/:categoryID", ctgController.FindOne)
-	router.PUT("/api/categories/:categoryID", ctgController.Update)
-	router.DELETE("/api/categories/:categoryID", ctgController.Delete)
-
-	// set global error handler
-	router.PanicHandler = exception.ErrorHandler
+	// setup router
+	router := app.NewRouter(ctgController)
 
 	// setup server connection address
 	server := http.Server{
